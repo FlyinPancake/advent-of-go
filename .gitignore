@@ -1,0 +1,33 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+advent-of-go
+
+# Test binary
+*.test
+
+# Output of go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Input files (they're personal and shouldn't be shared per AoC rules)
+inputs/**/*.txt
+!inputs/**/.gitkeep
+
+# Compiled binary
+/main
