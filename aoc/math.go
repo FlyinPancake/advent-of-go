@@ -14,6 +14,10 @@ func AbsDiff(a, b int) int {
 	return Abs(diff)
 }
 
+func PosMod(a, b int) int {
+	return ((a % b) + b) % b
+}
+
 // Abs64 returns the absolute value of x for int64
 func Abs64(x int64) int64 {
 	if x < 0 {

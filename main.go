@@ -8,6 +8,8 @@ import (
 
 	"github.com/flyinpancake/advent-of-go/aoc"
 	// Import all day solutions here, organized by year
+	// 2025
+	_ "github.com/flyinpancake/advent-of-go/solutions/2025/day01"
 	// 2024
 	_ "github.com/flyinpancake/advent-of-go/solutions/2024/day01"
 	// _ "github.com/flyinpancake/advent-of-go/solutions/2024/day02"
