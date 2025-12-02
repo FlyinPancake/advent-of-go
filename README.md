@@ -6,21 +6,9 @@ A Go harness for solving Advent of Code puzzles with testing, benchmarking, and 
 
 ```
 advent-of-go/
-├── main.go              # CLI runner
-├── go.mod
-├── Makefile             # Convenience commands
-├── README.md
-├── aoc/                 # Core utilities
-│   ├── solution.go      # Solution interface and registry
-│   ├── input.go         # Input file handling
-│   ├── parse.go         # Parsing utilities
-│   ├── math.go          # Math utilities (GCD, LCM, etc.)
-│   ├── structures.go    # Data structures (Point, Set, Stack, Queue)
-│   └── testing.go       # Testing utilities
 ├── inputs/              # Input files organized by year
 │   ├── 2024/
 │   │   ├── day01.txt
-│   │   ├── day01_example.txt
 │   │   └── ...
 │   └── 2023/
 │       └── ...

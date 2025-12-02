@@ -1,7 +1,6 @@
 package day01
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/flyinpancake/advent-of-go/aoc"
@@ -14,53 +13,53 @@ func init() {
 // Solution implements aoc.Solution for Year 2025 Day 01
 type Solution struct{}
 
+const (
+	dialSize     = 100
+	dialStartRot = 50
+)
+
 // Part1 solves part 1 of Day 01
-func (s *Solution) Part1(input string) string {
+func (*Solution) Part1(input string) string {
 	lines := aoc.Lines(input)
-	rotations := append([]int{}, 50)
-	for i, line := range lines {
-		var data int
+	currentRot := dialStartRot
+	landedOnZero := 0
+	for _, line := range lines {
+		data := aoc.MustInt(line[1:])
 		if line[0] == 'L' {
-			data = -1 * aoc.MustInt(line[1:])
-		} else {
-			data = aoc.MustInt(line[1:])
+			data = -data
 		}
-		newRot := rotations[i] + data
-		rotations = append(rotations, newRot)
-	}
-
-	n := 0
-	for _, rot := range rotations {
-		if rot%100 == 0 {
-			n++
+		currentRot += data
+		if currentRot%dialSize == 0 {
+			landedOnZero++
 		}
 	}
 
-	return strconv.Itoa(n)
+	return strconv.Itoa(landedOnZero)
 }
 
-// Rotate dial from `current` to `dir` by `amount` returning (`newCurrent`, `passedZeroTimes`)
-func rotateDial(current int, dir byte, amount int) (int, int) {
+// rotateDial simulates rotating the dial from the current position
+// in dir ('L' or 'R') by amount, returning new value (0<=value<100)
+// and the number of times the 0 mark was passed
+func rotateDial(current int, dir byte, amount int) (newRot, passedZero int) {
 	sign := 1
 	if dir == 'L' {
 		sign = -1
 	}
 	changed := current + (sign * amount)
 	if changed < 0 {
-		overflows := changed / 100
-		rem := aoc.PosMod(changed, 100)
-		var correction int
+		overflows := changed / dialSize
+		newRot = aoc.PosMod(changed, dialSize)
+		passedZero = aoc.Abs(overflows) + 1
+		// Correct for starting the rotation from 0
 		if current == 0 {
-			correction = 0
-		} else {
-			correction = 1
+			passedZero--
 		}
-		return rem, aoc.Abs(overflows) + correction
+		return
 	}
-	if changed >= 100 {
-		overflows := changed / 100
-		rem := aoc.PosMod(changed, 100)
-		return rem, overflows
+	if changed >= dialSize {
+		passedZero = changed / dialSize
+		newRot = aoc.PosMod(changed, dialSize)
+		return
 	}
 	if changed == 0 {
 		return 0, 1
@@ -69,19 +68,17 @@ func rotateDial(current int, dir byte, amount int) (int, int) {
 }
 
 // Part2 solves part 2 of Day 01
-func (s *Solution) Part2(input string) string {
+func (*Solution) Part2(input string) string {
 	lines := aoc.Lines(input)
 	counter := 0
-	dial := 50
+	dial := dialStartRot
 	for _, line := range lines {
 		dir := line[0]
 		data := aoc.MustInt(line[1:])
 		var count int
 		dial, count = rotateDial(dial, dir, data)
-		fmt.Println(line, ": ", dial, count)
 		counter += count
 	}
 
-	// TODO: Implement Part 2
 	return strconv.Itoa(counter)
 }

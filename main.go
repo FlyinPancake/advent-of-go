@@ -20,10 +20,11 @@ import (
 func main() {
 	day := flag.Int("day", 0, "Day to run (1-25)")
 	part := flag.Int("part", 0, "Part to run (1 or 2, 0 for both)")
-	year := flag.Int("year", 2024, "Year of Advent of Code")
+	year := flag.Int("year", 2025, "Year of Advent of Code")
 	benchmark := flag.Bool("bench", false, "Run benchmarks")
 	iterations := flag.Int("iterations", 1000, "Number of benchmark iterations")
 	listAll := flag.Bool("list", false, "List all registered solutions")
+	new := flag.Bool("new", false, "Scaffold a new day's solution (requires -day and -year)")
 	flag.Parse()
 
 	if *listAll {
@@ -32,7 +33,7 @@ func main() {
 	}
 
 	if *day == 0 {
-		printUsage()
+		flag.Usage()
 		os.Exit(0)
 	}
 
@@ -44,6 +45,18 @@ func main() {
 	if *part < 0 || *part > 2 {
 		fmt.Fprintf(os.Stderr, "Error: part must be 0, 1, or 2\n")
 		os.Exit(1)
+	}
+
+	if *new {
+		err := scaffoldNewDay(*year, *day)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error scaffolding new day: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Scaffolded new solution for Year %d Day %02d\n", *year, *day)
+		fmt.Printf("Don't forget to import the new day's package in main.go!\n")
+		fmt.Printf("      _ \"github.com/flyinpancake/advent-of-go/solutions/%d/day%02d\"\n", *year, *day)
+		os.Exit(0)
 	}
 
 	solution, ok := aoc.GetSolution(*year, *day)
@@ -68,23 +81,6 @@ func main() {
 	} else {
 		runSolution(solution, input, *part)
 	}
-}
-
-func printUsage() {
-	fmt.Println("Advent of Code - Go Solutions")
-	fmt.Println("==============================")
-	fmt.Println()
-	fmt.Println("Usage: go run main.go -day=<day> [-year=<year>] [-part=<part>] [-bench] [-iterations=<n>]")
-	fmt.Println()
-	fmt.Println("Options:")
-	fmt.Println("  -day         Day to run (1-25), required")
-	fmt.Println("  -year        Year of Advent of Code (default: 2024)")
-	fmt.Println("  -part        Part to run (1 or 2, 0 for both, default: 0)")
-	fmt.Println("  -bench       Run benchmarks")
-	fmt.Println("  -iterations  Number of benchmark iterations (default: 1000)")
-	fmt.Println("  -list        List all registered solutions")
-	fmt.Println()
-	printRegisteredSolutions()
 }
 
 func printRegisteredSolutions() {
@@ -145,4 +141,8 @@ func runBenchmark(solution aoc.Solution, input string, part int, iterations int)
 		avg := elapsed / time.Duration(iterations)
 		fmt.Printf("Part 2: %v avg (%v total for %d iterations)\n", avg, elapsed, iterations)
 	}
+}
+
+func scaffoldNewDay(year, day int) error {
+	return aoc.CreateNewSolutionScaffold(year, day)
 }
