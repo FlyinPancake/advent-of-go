@@ -1,6 +1,7 @@
 package day02
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -17,31 +18,26 @@ type Solution struct{}
 // ID is invalid if it is a sequence repeated at least twice like 1212 is invalid since it's 12 repeated twice, but 101 is valid
 func validateIdRepeatsTwice(s string) bool {
 	idLength := len(s)
-	possibleRepeats := 2
-
-	for possibleSeqLen := 1; possibleSeqLen <= (idLength / 2); possibleSeqLen++ {
-		if possibleSeqLen*possibleRepeats != idLength {
-			continue
-		}
-		// check remainder after possible seq
-		possibleSeq := s[0:possibleSeqLen]
-		if strings.Repeat(possibleSeq, possibleRepeats) == s[:possibleRepeats*possibleSeqLen] {
-			return false
-		}
+	if idLength%2 != 0 {
+		return true
 	}
-	return true
+	half := idLength / 2
+
+	return s[:half] != s[half:]
 }
 
 // Part1 solves part 1 of Day 02
 func (s *Solution) Part1(input string) string {
 	ranges := aoc.CommaSeparated(aoc.TrimInput(input))
 	total := 0
+	buf := make([]byte, 0, 20)
 	for _, r := range ranges {
-		parts := strings.Split(r, "-")
-		rangeStart := aoc.MustInt(parts[0])
-		rangeEnd := aoc.MustInt(parts[1])
+		rangeStartStr, rangeEndStr, _ := strings.Cut(r, "-")
+		rangeStart := aoc.MustInt(rangeStartStr)
+		rangeEnd := aoc.MustInt(rangeEndStr)
 		for id := rangeStart; id <= rangeEnd; id++ {
-			if !validateIdRepeatsTwice(strconv.Itoa(id)) {
+			buf := strconv.AppendInt(buf[:0], int64(id), 10)
+			if !validateIdRepeatsTwice(string(buf)) {
 				// fmt.Printf("%d\n", id)
 				total += id
 			}
@@ -51,18 +47,24 @@ func (s *Solution) Part1(input string) string {
 	return strconv.Itoa(total)
 }
 
+func isRepeatedPattern(s string, patternLen int) bool {
+	for ii := patternLen; ii < len(s); ii += 1 {
+		if s[ii] != s[ii%patternLen] {
+			return false
+		}
+	}
+	return true
+}
+
 // ID is invalid if it is a sequence repeated at least twice like 1212 is invalid since it's 12 repeated twice, but 101 is valid
 func validateIdRepeatsAtLeastTwice(s string) bool {
 	idLength := len(s)
 	for possibleSeqLen := 1; possibleSeqLen <= (idLength / 2); possibleSeqLen++ {
-		possibleRepeats := idLength / possibleSeqLen
-		if possibleSeqLen*possibleRepeats != idLength {
+		if idLength%possibleSeqLen != 0 {
 			continue
 		}
 
-		// check remainder after possible seq
-		possibleSeq := s[0:possibleSeqLen]
-		if strings.Repeat(possibleSeq, possibleRepeats) == s[:possibleRepeats*possibleSeqLen] {
+		if isRepeatedPattern(s, possibleSeqLen) {
 			return false
 		}
 	}
@@ -72,18 +74,20 @@ func validateIdRepeatsAtLeastTwice(s string) bool {
 // Part2 solves part 2 of Day 02
 func (s *Solution) Part2(input string) string {
 	ranges := aoc.CommaSeparated(aoc.TrimInput(input))
-	total := 0
+	var total int64
+	buf := make([]byte, 0, 20)
 	for _, r := range ranges {
-		parts := strings.Split(r, "-")
-		rangeStart := aoc.MustInt(parts[0])
-		rangeEnd := aoc.MustInt(parts[1])
+		rangeStartStr, rangeEndStr, _ := strings.Cut(r, "-")
+		rangeStart := aoc.MustInt64(rangeStartStr)
+		rangeEnd := aoc.MustInt64(rangeEndStr)
 		for id := rangeStart; id <= rangeEnd; id++ {
-			if !validateIdRepeatsAtLeastTwice(strconv.Itoa(id)) {
+			buf = strconv.AppendInt(buf[:0], id, 10)
+			if !validateIdRepeatsAtLeastTwice(string(buf)) {
 				// fmt.Printf("%d\n", id)
 				total += id
 			}
 		}
 	}
 
-	return strconv.Itoa(total)
+	return fmt.Sprintf("%d", total)
 }
