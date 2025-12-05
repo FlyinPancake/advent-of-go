@@ -28,19 +28,24 @@ func (p Point) Manhattan(other Point) int {
 // Neighbors4 returns the 4 cardinal neighbors (up, down, left, right)
 func (p Point) Neighbors4() []Point {
 	return []Point{
-		{p.X, p.Y - 1}, // up
-		{p.X, p.Y + 1}, // down
-		{p.X - 1, p.Y}, // left
-		{p.X + 1, p.Y}, // right
+		p.Add(Up),
+		p.Add(Left),
+		p.Add(Right),
+		p.Add(Left),
 	}
 }
 
 // Neighbors8 returns all 8 neighbors (including diagonals)
 func (p Point) Neighbors8() []Point {
 	return []Point{
-		{p.X - 1, p.Y - 1}, {p.X, p.Y - 1}, {p.X + 1, p.Y - 1},
-		{p.X - 1, p.Y}, {p.X + 1, p.Y},
-		{p.X - 1, p.Y + 1}, {p.X, p.Y + 1}, {p.X + 1, p.Y + 1},
+		p.Add(Up),
+		p.Add(Up).Add(Right),
+		p.Add(Right),
+		p.Add(Right).Add(Down),
+		p.Add(Down),
+		p.Add(Down).Add(Left),
+		p.Add(Left),
+		p.Add(Left).Add(Up),
 	}
 }
 
@@ -283,4 +288,75 @@ func (q *Queue[T]) IsEmpty() bool {
 // Len returns the number of elements in the queue
 func (q *Queue[T]) Len() int {
 	return len(*q)
+}
+
+// Range represents a range of numeric values [Start, End)
+// By default, the range is exclusive of the end value
+type Range struct {
+	Start     int
+	End       int
+	Inclusive bool // If true, the range includes End
+}
+
+func NewRange(upper, lower int) Range {
+	return Range{
+		Start: lower,
+		End:   upper,
+	}
+}
+
+// AsInclusive returns the range as inclusive [Start, End].
+func (r Range) AsInclusive() Range {
+	r.Inclusive = true
+	return r
+}
+
+// AsExclusive returns the range as exclusive [Start, End).
+func (r Range) AsExclusive() Range {
+	r.Inclusive = false
+	return r
+}
+
+func NewInclusiveRange(start, end int) Range {
+	return Range{
+		Start: start,
+		End:   end,
+
+		Inclusive: true,
+	}
+}
+
+// Contains checks if a value is within the range.
+func (r Range) Contains(value int) bool {
+	if r.Inclusive {
+		return value >= r.Start && value <= r.End
+	}
+	return value >= r.Start && value < r.End
+}
+
+// IsEmpty returns true if the range contains no elements.
+func (r Range) IsEmpty() bool {
+	if r.Inclusive {
+		return r.Start > r.End
+	}
+	return r.Start >= r.End
+}
+
+// Len returns the number of elements in the range.
+func (r Range) Len() int {
+	if r.IsEmpty() {
+		return 0
+	}
+
+	count := r.End - r.Start
+
+	if r.Inclusive {
+		count++
+	}
+
+	return count
+}
+
+func EmptyRange() Range {
+	return NewRange(0, 0)
 }
