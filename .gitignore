@@ -27,6 +27,7 @@ go.work
 
 # Input files (they're personal and shouldn't be shared per AoC rules)
 inputs/**/*.txt
+!inputs/**/*example.txt
 !inputs/**/.gitkeep
 
 # Compiled binary

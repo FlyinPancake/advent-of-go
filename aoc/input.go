@@ -44,6 +44,7 @@ func ReadExample(year, day int, name string) (string, error) {
 
 	paths := []string{
 		filepath.Join("inputs", fmt.Sprintf("%d", year), fmt.Sprintf("day%02d_%s.txt", day, name)),
+		filepath.Join("..", "..", "..", "inputs", fmt.Sprintf("%d", year), fmt.Sprintf("day%02d_%s.txt", day, name)),
 		filepath.Join("inputs", fmt.Sprintf("day%02d_%s.txt", day, name)),
 		filepath.Join(fmt.Sprintf("day%02d", day), fmt.Sprintf("%s.txt", name)),
 	}

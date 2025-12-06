@@ -14,6 +14,7 @@ import (
 	_ "github.com/flyinpancake/advent-of-go/solutions/2025/day03"
 	_ "github.com/flyinpancake/advent-of-go/solutions/2025/day04"
 	_ "github.com/flyinpancake/advent-of-go/solutions/2025/day05"
+	_ "github.com/flyinpancake/advent-of-go/solutions/2025/day06"
 
 	// 2024
 	_ "github.com/flyinpancake/advent-of-go/solutions/2024/day01"
