@@ -1,5 +1,7 @@
 package aoc
 
+import "math"
+
 // Point represents a 2D point with integer coordinates
 type Point struct {
 	X, Y int
@@ -86,6 +88,15 @@ func (p Point3) Manhattan(other Point3) int {
 	return Abs(p.X-other.X) + Abs(p.Y-other.Y) + Abs(p.Z-other.Z)
 }
 
+// Eucledian returns the eucledian distance from p to other
+func (p Point3) Eucledian(other Point3) float64 {
+	return math.Sqrt(
+		math.Pow(float64(p.X-other.X), 2) +
+			math.Pow(float64(p.Y-other.Y), 2) +
+			math.Pow(float64(p.Z-other.Z), 2),
+	)
+}
+
 // Neighbors6 returns the 6 face-adjacent neighbors in 3D
 func (p Point3) Neighbors6() []Point3 {
 	return []Point3{
@@ -139,10 +150,7 @@ func (s Set[T]) ToSlice() []T {
 
 // Union returns a new set with elements from both sets
 func (s Set[T]) Union(other Set[T]) Set[T] {
-	result := NewSet[T]()
-	for e := range s {
-		result.Add(e)
-	}
+	result := NewSet[T](s.ToSlice()...)
 	for e := range other {
 		result.Add(e)
 	}
